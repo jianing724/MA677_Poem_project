@@ -7,7 +7,7 @@ output: html_notebook
 
 ```{r}
 ## poisson regression
-poem <- read.csv("/Users/jianingyi/Documents/Documents - Jenny Yi’s MacBook Air/mssp/ma676/consulting/poem_project.csv")
+poem <- read.csv("//Users/jianingyi/Documents/Documents - Jenny Yi’s MacBook Air/mssp/ma676/consulting/MA677_Poem_project/poem_project.csv")
 poem$end <- as.factor(poem$end )
 poem$followed <- as.factor(poem$followed )
 poem$poem6 <- as.factor(poem$poem6 )
@@ -21,9 +21,16 @@ summary(model2)
 ## likelyhood ratio test
 lrt_result <- anova(model, model2, test="Chisq")
 lrt_result
-
-par(mfrow=c(2,2))
-plot(model)
+# binned residual plots
+library(arm)
+old.par <- par(no.readonly = TRUE)
+x <- predict(model)
+ y <- resid(model)
+ binnedplot(x,y)
+par(old.par)
+x <- predict(model2)
+y <- resid(model2)
+binnedplot(x,y)
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
