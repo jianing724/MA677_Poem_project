@@ -1,0 +1,34 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+ 
+
+```{r}
+## poisson regression
+poem <- read.csv("/Users/jianingyi/Documents/Documents - Jenny Yi’s MacBook Air/mssp/ma676/consulting/poem_project.csv")
+poem$end <- as.factor(poem$end )
+poem$followed <- as.factor(poem$followed )
+poem$poem6 <- as.factor(poem$poem6 )
+
+
+model <- glm(count ~ poem2+poem3+poem4+poem5+poem6+end+followed+poem6:end+poem6:followed, family = poisson, data = poem)
+model2 <- glm(count ~ poem2+poem3+poem4+poem5+poem6+end+followed, family = poisson, data = poem)
+summary(model)
+summary(model2)
+
+## likelyhood ratio test
+lrt_result <- anova(model, model2, test="Chisq")
+lrt_result
+
+par(mfrow=c(2,2))
+plot(model)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
