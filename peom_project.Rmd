@@ -94,9 +94,38 @@ binnedplot(x,y)
 
 
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+```{r}
+# K mean cluster
+library(tidyverse)
+library(readxl)
+poems_data <- read_excel("poem.xls")
+poems_data <- poems_data %>% mutate_at(vars(-poem), as.numeric)
+poems_features <- select(poems_data, -poem)
+# Set the number of clusters; you might need to adjust this based on your data
+k <- 2
+# Perform K-means clustering
+set.seed(123)  # Set a random seed for reproducibility
+clusters <- kmeans(poems_features, centers = k, nstart = 20)
+# Add cluster assignments back to the data
+poems_data$Cluster <- clusters$cluster
+# Check which cluster 'poem6' is in and how many other poems are in the same cluster
+poem6_cluster <- poems_data %>% filter(poem == "6") %>% pull(Cluster)
+cluster_counts <- poems_data %>% count(Cluster)
+cat("Poem6 is in cluster:", poem6_cluster, "\n")
+cat("The number of poems in each cluster:\n")
+print(cluster_counts)
+# Perform PCA
+pca_result <- prcomp(poems_features, center = TRUE, scale. = TRUE)
+# Create a data frame for plotting
+plot_data <- data.frame(x = pca_result$x[,1], y = pca_result$x[,2], Cluster = as.factor(poems_data$Cluster))
+# Plot the PCA results with clusters
+ggplot(plot_data, aes(x = x, y = y, color = Cluster, label = row.names(poems_data))) +
+  geom_point() +
+  geom_text(hjust = 0, vjust = 0) +  # Adjust the position of text labels
+  theme_minimal() +
+  labs(title = "PCA of Poems with K-means Clusters", x = "PC1", y = "PC2")
+```
+```
 
