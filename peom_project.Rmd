@@ -12,15 +12,74 @@ poem$end <- as.factor(poem$end )
 poem$followed <- as.factor(poem$followed )
 poem$poem6 <- as.factor(poem$poem6 )
 
+model0 <- glm(count ~ poem2+poem3+poem4+poem5+poem6+end+followed, family = poisson, data = poem)
+model1 <- glm(count ~ poem2+poem3+poem4+poem5+poem6+end+followed+poem6:end+poem6:followed, family = poisson, data = poem)
+```
 
-model <- glm(count ~ poem2+poem3+poem4+poem5+poem6+end+followed+poem6:end+poem6:followed, family = poisson, data = poem)
-model2 <- glm(count ~ poem2+poem3+poem4+poem5+poem6+end+followed, family = poisson, data = poem)
-summary(model)
-summary(model2)
 
+```{r}
+model0_summary <- summary(model0)
+
+# 获取coefficients矩阵的行名
+coefficient_names <- rownames(model0_summary$coefficients)
+
+# 替换行名以反映新的标签
+coefficient_names <- sub("^followed$", "Followed by Nothing", coefficient_names)
+coefficient_names <- sub("followed1", "Followed by Vowel", coefficient_names)
+coefficient_names <- sub("followed2", "Followed by Consonant", coefficient_names)
+coefficient_names <- sub("^end$", "End with As", coefficient_names)
+coefficient_names <- sub("end1", "End with Ous", coefficient_names)
+
+# 重新赋值coefficients矩阵的行名
+rownames(model0_summary$coefficients) <- coefficient_names
+
+# 打印修改后的summary对象
+print(model0_summary)
+```
+
+
+```{r}
+model1_summary <- summary(model1)
+
+# 获取coefficients矩阵的行名
+coefficient_names <- rownames(model1_summary$coefficients)
+coefficient_names <- sub("followed1", "Followed by Vowel", coefficient_names)
+coefficient_names <- sub("followed2", "Followed by Consonant", coefficient_names)
+coefficient_names <- sub("poem61:followed1", "Poem6 & Followed by Vowel", coefficient_names)
+coefficient_names <- sub("poem61:followed2", "Poem6 & Followed by Consonant", coefficient_names)
+
+# 对于end变量的更改
+coefficient_names <- sub("end1", "End with Ous", coefficient_names)
+
+# 如果还有end和poem6的交互项也需要改名
+coefficient_names <- sub("poem61:end1", "Poem6 & End with Ous", coefficient_names)
+
+# 重新赋值coefficients矩阵的行名
+rownames(model1_summary$coefficients) <- coefficient_names
+
+# 打印修改后的summary对象
+print(model1_summary)
+```
+
+
+```{r}
 ## likelyhood ratio test
-lrt_result <- anova(model, model2, test="Chisq")
+lrt_result <- anova(model0, model1, test="Chisq")
 lrt_result
+```
+```{r}
+par(mfrow=c(1,2)) 
+plot(model0, which=1) 
+abline(h=0, col="red") 
+title(main="Residuals vs Fitted for model")
+
+plot(model1, which=1) 
+abline(h=0, col="red") 
+title(main="Residuals vs Fitted for model2")
+```
+
+
+```{r}
 # binned residual plots
 library(arm)
 old.par <- par(no.readonly = TRUE)
@@ -32,6 +91,8 @@ x <- predict(model2)
 y <- resid(model2)
 binnedplot(x,y)
 ```
+
+
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
