@@ -96,7 +96,6 @@ binnedplot(x,y)
 
 
 ```{r}
-```{r}
 # K mean cluster
 library(tidyverse)
 library(readxl)
