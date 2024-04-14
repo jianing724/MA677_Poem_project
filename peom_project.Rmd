@@ -15,32 +15,14 @@ model0 <- glm(count ~ poem2+poem3+poem4+poem5+poem6+end+followed, family = poiss
 model1 <- glm(count ~ poem2+poem3+poem4+poem5+poem6+end+followed+poem6:end+poem6:followed, family = poisson, data = poem)
 summary(model1)
 ```
+
+
 ```{r}
-library(nnet)  # Load the nnet package for multinom
-
-# Read the data
+library(nnet)  
 poem <- read.csv("poem_project.csv")
-
-# Categorize the count variable
-poem$count_cat <- cut(poem$count,
-                      breaks = quantile(poem$count, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
-                      labels = c("Low", "Medium", "High"),
-                      include.lowest = TRUE)
-
-# Convert categorical variables to factors
-poem$count_cat <- as.factor(poem$count_cat)
-poem$poem6 <- as.factor(poem$poem6)
-poem$end <- as.factor(poem$end)
-poem$followed <- as.factor(poem$followed)
-
-# Fit the multinomial model
-model_multinom <- multinom(count_cat ~ poem2 + poem3 + poem4 + poem5 + poem6 + end + followed + poem6:end + poem6:followed, data = poem)
-
-# Summary of the model
-summary(model_multinom)
-
+model2 <- multinom(period ~ count + poem2 + poem3 + poem4 + poem5 + poem6 + end + followed, data = poem)
+summary(model2)
 ```
-
 ```{r}
 model0_summary <- summary(model0)
 
