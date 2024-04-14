@@ -1,0 +1,14 @@
+---
+title: "Untitled"
+author: "Yingmai Chen"
+date: "2024-04-12"
+output: html_document
+---
+
+```{r}
+#multinomial model
+
+```
+
+
+
