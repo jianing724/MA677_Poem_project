@@ -20,9 +20,20 @@ summary(model1)
 ```{r}
 library(nnet)  
 poem <- read.csv("poem_project.csv")
-model2 <- multinom(period ~ count + poem2 + poem3 + poem4 + poem5 + poem6 + end + followed, data = poem)
-summary(model2)
+
+ml <- glm(count ~ poem, family = poisson, data = poem)
+summary(ml)
+multinom(poem ~ 1, data = poem, weights = count)
+
+coef_poisson <- coef(ml)
+coef_multinom <- coefficients(multinom(poem ~ 1, data = poem, weights = count))
 ```
+```{r}
+
+```
+
+
+
 ```{r}
 model0_summary <- summary(model0)
 
